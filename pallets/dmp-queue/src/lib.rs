@@ -239,7 +239,8 @@ pub mod pallet {
 					Ok(0)
 				},
 				Ok(Ok(x)) => {
-					let outcome = T::XcmExecutor::execute_xcm(Parent, x, limit);
+					let hash = sp_io::hashing::blake2_256(&data[..]);
+					let outcome = T::XcmExecutor::execute_xcm(Parent, x, hash, limit);
 					match outcome {
 						Outcome::Error(XcmError::WeightLimitReached(required)) =>
 							Err((message_id, required)),

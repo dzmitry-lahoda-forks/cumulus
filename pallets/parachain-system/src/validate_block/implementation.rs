@@ -205,8 +205,12 @@ fn host_storage_set(key: &[u8], value: &[u8]) {
 	with_externalities(|ext| ext.place_storage(key.to_vec(), Some(value.to_vec())))
 }
 
-fn host_storage_get(key: &[u8]) -> Option<bytes::Bytes> {
-	with_externalities(|ext| ext.storage(key).map(|value| value.into()))
+// TODO: hack
+// fn host_storage_get(key: &[u8]) -> Option<bytes::Bytes> {
+// 	with_externalities(|ext| ext.storage(key).map(|value| value.into()))
+// }
+fn host_storage_get(key: &[u8]) -> Option<Vec<u8>> {
+	with_externalities(|ext| ext.storage(key))
 }
 
 fn host_storage_exists(key: &[u8]) -> bool {
@@ -222,7 +226,9 @@ fn host_storage_root(version: StateVersion) -> Vec<u8> {
 }
 
 fn host_storage_clear_prefix(prefix: &[u8], limit: Option<u32>) -> KillStorageResult {
-	with_externalities(|ext| ext.clear_prefix(prefix, limit, None).into())
+	// TODO: hack
+	// with_externalities(|ext| ext.clear_prefix(prefix, limit, None).into())
+	with_externalities(|ext| hack_result(ext.clear_prefix(prefix, limit)))
 }
 
 fn host_storage_append(key: &[u8], value: Vec<u8>) {
@@ -288,7 +294,9 @@ fn host_default_child_storage_storage_kill(
 	limit: Option<u32>,
 ) -> KillStorageResult {
 	let child_info = ChildInfo::new_default(storage_key);
-	with_externalities(|ext| ext.kill_child_storage(&child_info, limit, None).into())
+	// TODO: hack
+	// with_externalities(|ext| ext.kill_child_storage(&child_info, limit).into())
+	with_externalities(|ext| hack_result(ext.kill_child_storage(&child_info, limit)))
 }
 
 fn host_default_child_storage_exists(storage_key: &[u8], key: &[u8]) -> bool {
@@ -302,7 +310,9 @@ fn host_default_child_storage_clear_prefix(
 	limit: Option<u32>,
 ) -> KillStorageResult {
 	let child_info = ChildInfo::new_default(storage_key);
-	with_externalities(|ext| ext.clear_child_prefix(&child_info, prefix, limit, None).into())
+	// TODO: hack
+	// with_externalities(|ext| ext.clear_child_prefix(&child_info, prefix, limit).into())
+	with_externalities(|ext| hack_result(ext.clear_child_prefix(&child_info, prefix, limit)))
 }
 
 fn host_default_child_storage_root(storage_key: &[u8], version: StateVersion) -> Vec<u8> {
@@ -318,3 +328,13 @@ fn host_default_child_storage_next_key(storage_key: &[u8], key: &[u8]) -> Option
 fn host_offchain_index_set(_key: &[u8], _value: &[u8]) {}
 
 fn host_offchain_index_clear(_key: &[u8]) {}
+
+
+fn hack_result(result: (bool, u32)) -> KillStorageResult {
+	let (b, n) = result;
+	if b == true {
+		KillStorageResult::AllRemoved(n)
+	} else {
+		KillStorageResult::SomeRemaining(n)
+	}
+}

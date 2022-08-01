@@ -101,11 +101,15 @@ where
 /// Asset filter that allows all assets from a certain location.
 pub struct AssetsFrom<T>(PhantomData<T>);
 impl<T: Get<MultiLocation>> FilterAssetLocation for AssetsFrom<T> {
-	fn filter_asset_location(asset: &MultiAsset, origin: &MultiLocation) -> bool {
-		let loc = T::get();
-		&loc == origin &&
-			matches!(asset, MultiAsset { id: AssetId::Concrete(asset_loc), fun: Fungible(_a) }
-			if asset_loc.match_and_split(&loc).is_some())
+	// TODO: hack
+	// fn filter_asset_location(asset: &MultiAsset, origin: &MultiLocation) -> bool {
+	// 	let loc = T::get();
+	// 	&loc == origin &&
+	// 		matches!(asset, MultiAsset { id: AssetId::Concrete(asset_loc), fun: Fungible(_a) }
+	// 		if asset_loc.match_and_split(&loc).is_some())
+	// }
+	fn contains(asset: &MultiAsset, origin: &MultiLocation) -> bool {
+		unimplemented!("TODO: hack - implement if needed")
 	}
 }
 

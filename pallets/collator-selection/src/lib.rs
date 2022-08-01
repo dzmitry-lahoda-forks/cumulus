@@ -408,7 +408,9 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// Get a unique, inaccessible account id from the `PotId`.
 		pub fn account_id() -> T::AccountId {
-			T::PotId::get().into_account_truncating()
+			// TODO: hack, not added yet in patched version
+			// T::PotId::get().into_account_truncating()
+			T::PotId::get().into_account()
 		}
 
 		/// Removes a candidate if they exist and sends them back their deposit

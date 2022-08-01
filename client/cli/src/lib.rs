@@ -411,24 +411,29 @@ impl sc_cli::CliConfiguration for NormalizedRunCmd {
 		self.base.rpc_max_payload()
 	}
 
-	fn rpc_max_request_size(&self) -> sc_cli::Result<Option<usize>> {
-		Ok(self.base.rpc_max_request_size)
-	}
-
-	fn rpc_max_response_size(&self) -> sc_cli::Result<Option<usize>> {
-		Ok(self.base.rpc_max_response_size)
-	}
-
-	fn rpc_max_subscriptions_per_connection(&self) -> sc_cli::Result<Option<usize>> {
-		Ok(self.base.rpc_max_subscriptions_per_connection)
-	}
+	// TODO: hacked
+	// fn rpc_max_request_size(&self) -> sc_cli::Result<Option<usize>> {
+	// 	Ok(self.base.rpc_max_request_size)
+	// }
+	//
+	// fn rpc_max_response_size(&self) -> sc_cli::Result<Option<usize>> {
+	// 	Ok(self.base.rpc_max_response_size)
+	// }
+	//
+	// fn rpc_max_subscriptions_per_connection(&self) -> sc_cli::Result<Option<usize>> {
+	// 	Ok(self.base.rpc_max_subscriptions_per_connection)
+	// }
 
 	fn ws_max_out_buffer_capacity(&self) -> sc_cli::Result<Option<usize>> {
 		self.base.ws_max_out_buffer_capacity()
 	}
 
-	fn transaction_pool(&self, is_dev: bool) -> sc_cli::Result<TransactionPoolOptions> {
-		self.base.transaction_pool(is_dev)
+	// TODO: hacked
+	// fn transaction_pool(&self, is_dev: bool) -> sc_cli::Result<TransactionPoolOptions> {
+	// 	self.base.transaction_pool(is_dev)
+	// }
+	fn transaction_pool(&self) -> sc_cli::Result<TransactionPoolOptions> {
+		self.base.transaction_pool()
 	}
 
 	fn max_runtime_instances(&self) -> sc_cli::Result<Option<usize>> {

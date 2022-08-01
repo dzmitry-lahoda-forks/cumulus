@@ -335,6 +335,21 @@ fn build_polkadot_full_node(
 		(polkadot_service::IsCollator::No, None)
 	};
 
+	// TODO: hack
+	// let relay_chain_full_node = polkadot_service::build_full(
+	// 	config,
+	// 	is_collator,
+	// 	None,
+	// 	// Disable BEEFY. It should not be required by the internal relay chain node.
+	// 	false,
+	// 	None,
+	// 	telemetry_worker_handle,
+	// 	true,
+	// 	polkadot_service::RealOverseerGen,
+	// 	None,
+	// 	None,
+	// 	hwbench,
+	// )?;
 	let relay_chain_full_node = polkadot_service::build_full(
 		config,
 		is_collator,
@@ -345,9 +360,6 @@ fn build_polkadot_full_node(
 		telemetry_worker_handle,
 		true,
 		polkadot_service::RealOverseerGen,
-		None,
-		None,
-		hwbench,
 	)?;
 
 	Ok((relay_chain_full_node, maybe_collator_key))
