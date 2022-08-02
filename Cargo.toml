@@ -1,7 +1,13 @@
 [workspace]
 members = [
 	"bridges/modules/grandpa",
+	"bridges/modules/messages",
 	"bridges/modules/parachains",
+	"bridges/modules/relayers",
+	"bridges/modules/shift-session-manager",
+	"bridges/primitives/polkadot-core",
+	"bridges/primitives/chain-rococo",
+	"bridges/primitives/chain-wococo",
 	"client/cli",
 	"client/consensus/aura",
 	"client/consensus/common",
@@ -232,9 +238,6 @@ pallet-contracts-proc-macro = { git = "https://github.com/paritytech//substrate"
 pallet-assets = { git = "https://github.com/paritytech//substrate", branch = "sv-locked-for-gav-xcm-v3-and-bridges" }
 pallet-uniques = { git = "https://github.com/paritytech//substrate", branch = "sv-locked-for-gav-xcm-v3-and-bridges" }
 pallet-contracts = { git = "https://github.com/paritytech//substrate", branch = "sv-locked-for-gav-xcm-v3-and-bridges" }
-cumulus-pallet-aura-ext = { git = "https://github.com/paritytech/cumulus", branch = "gav-xcm-v3", default-features = false }
-cumulus-pallet-parachain-system = { git = "https://github.com/paritytech/cumulus", branch = "gav-xcm-v3", default-features = false }
-cumulus-pallet-xcmp-queue = { git = "https://github.com/paritytech/cumulus", branch = "gav-xcm-v3", default-features = false }
 
 [patch."https://github.com/paritytech/polkadot"]
 kusama-runtime = { git = "https://github.com/paritytech//polkadot", branch = "locked-for-gav-xcm-v3-and-bridges" }
