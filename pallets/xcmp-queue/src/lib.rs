@@ -44,11 +44,11 @@ use cumulus_primitives_core::{
 	ParaId, XcmpMessageFormat, XcmpMessageHandler, XcmpMessageSource,
 };
 use frame_support::{
+	pallet_prelude::Get,
 	traits::EnsureOrigin,
 	weights::{constants::WEIGHT_PER_MILLIS, Weight},
 };
 use polkadot_runtime_common::xcm_sender::ConstantPrice;
-use frame_support::pallet_prelude::Get;
 use rand_chacha::{
 	rand_core::{RngCore, SeedableRng},
 	ChaChaRng,
@@ -1098,7 +1098,6 @@ impl<T: Config> XcmpMessageSource for Pallet<T> {
 	}
 }
 
-
 pub trait PriceForSiblingDelivery {
 	fn price_for_sibling_delivery(id: ParaId, message: &Xcm<()>) -> MultiAssets;
 }
@@ -1174,7 +1173,7 @@ impl<T: Config> SendXcm for Pallet<T> {
 
 		match Self::send_fragment(id, XcmpMessageFormat::ConcatenatedVersionedXcm, xcm) {
 			Ok(_) => {
-				Self::deposit_event(Event::XcmpMessageSent {message_hash: Some(message_hash)});
+				Self::deposit_event(Event::XcmpMessageSent { message_hash: Some(message_hash) });
 				Ok(hash)
 			},
 			Err(e) => Err(SendError::Transport(<&'static str>::from(e))),

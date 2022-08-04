@@ -53,7 +53,7 @@ where
 		+ Send
 		+ Sync
 		+ 'static,
-	C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
+	C::Api: frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
 	C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>,
 	C::Api: BlockBuilder<Block>,
 	P: TransactionPool + Sync + Send + 'static,
@@ -85,7 +85,7 @@ where
 		+ Send
 		+ Sync
 		+ 'static,
-	C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
+	C::Api: frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
 	C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>,
 	C::Api: pallet_contracts_rpc::ContractsRuntimeApi<Block, AccountId, Balance, BlockNumber, Hash>,
 	C::Api: BlockBuilder<Block>,
@@ -97,7 +97,7 @@ where
 	// use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApiServer};
 	// TODO: check sc_rpc_server
 	// use sc_rpc::dev::{Dev, DevApiServer};
-	use sc_rpc::dev::{Dev};
+	use sc_rpc::dev::Dev;
 
 	let mut module = RpcExtension::new(());
 	let FullDeps { client, pool, deny_unsafe } = deps;

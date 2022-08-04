@@ -62,7 +62,10 @@ pub mod pallet {
 		fn on_finalize(_: BlockNumberFor<T>) {
 			// Update to the latest AuRa authorities.
 			// TODO: hack
-			Authorities::<T>::put(BoundedVec::try_from(Aura::<T>::authorities().into_inner()).expect("TODO: hack - error"));
+			Authorities::<T>::put(
+				BoundedVec::try_from(Aura::<T>::authorities().into_inner())
+					.expect("TODO: hack - error"),
+			);
 		}
 
 		fn on_initialize(_: BlockNumberFor<T>) -> Weight {
@@ -101,7 +104,9 @@ pub mod pallet {
 
 			// TODO: hack
 			// Authorities::<T>::put(authorities);
-			Authorities::<T>::put(BoundedVec::try_from(authorities.into_inner()).expect("TODO: hack - error"));
+			Authorities::<T>::put(
+				BoundedVec::try_from(authorities.into_inner()).expect("TODO: hack - error"),
+			);
 		}
 	}
 }

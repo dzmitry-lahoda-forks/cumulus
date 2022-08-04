@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 use frame_support::{
 	log,
 	traits::{fungibles::Inspect, tokens::BalanceConversion},
-	weights::{Weight, WeightToFee, WeightToFeePolynomial},
+	weights::{Weight, WeightToFeePolynomial},
 };
 use xcm::latest::prelude::*;
 use xcm_executor::traits::ShouldExecute;
@@ -99,7 +99,9 @@ where
 		weight: Weight,
 	) -> Result<<pallet_assets::Pallet<Runtime> as Inspect<AccountIdOf<Runtime>>>::Balance, XcmError>
 	{
-		let amount = WeightToFee::weight_to_fee(&weight);
+		// TODO: hack
+		// let amount = WeightToFee::weight_to_fee(&weight);
+		let amount = WeightToFee::calc(&weight);
 		// If the amount gotten is not at least the ED, then make it be the ED of the asset
 		// This is to avoid burning assets and decreasing the supply
 		let asset_amount = BalanceConverter::to_asset_balance(amount, asset_id)

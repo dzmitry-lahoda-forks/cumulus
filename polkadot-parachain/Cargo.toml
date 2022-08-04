@@ -25,7 +25,7 @@ serde = { version = "1.0.144", features = ["derive"] }
 #collectives-polkadot-runtime = { path = "../parachains/runtimes/collectives/collectives-polkadot" }
 #contracts-rococo-runtime = { path = "../parachains/runtimes/contracts/contracts-rococo" }
 bridge-hub-rococo-runtime = { path = "../parachains/runtimes/bridge-hubs/bridge-hub-rococo" }
-penpal-runtime = { path = "../parachains/runtimes/testing/penpal" }
+#penpal-runtime = { path = "../parachains/runtimes/testing/penpal" }
 jsonrpsee = { version = "0.14.0", features = ["server"] }
 parachains-common = { path = "../parachains/common" }
 

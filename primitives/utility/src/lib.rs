@@ -26,12 +26,11 @@ use frame_support::{
 };
 use sp_runtime::{traits::Saturating, SaturatedConversion};
 
-use xcm_builder::TakeRevenue;
-use xcm_executor::traits::{MatchesFungibles, TransactAsset, WeightTrader};
 use cumulus_primitives_core::{MessageSendError, UpwardMessageSender};
 use sp_std::{marker::PhantomData, prelude::*};
 use xcm::{latest::prelude::*, WrapVersion};
-
+use xcm_builder::TakeRevenue;
+use xcm_executor::traits::{MatchesFungibles, TransactAsset, WeightTrader};
 
 pub trait PriceForParentDelivery {
 	fn price_for_parent_delivery(message: &Xcm<()>) -> MultiAssets;
@@ -80,10 +79,10 @@ impl PriceForParentDelivery for () {
 /// for the `SendXcm` implementation.
 pub struct ParentAsUmp<T, W, P>(PhantomData<(T, W, P)>);
 impl<T, W, P> SendXcm for ParentAsUmp<T, W, P>
-	where
-		T: UpwardMessageSender,
-		W: WrapVersion,
-		P: PriceForParentDelivery,
+where
+	T: UpwardMessageSender,
+	W: WrapVersion,
+	P: PriceForParentDelivery,
 {
 	type Ticket = Vec<u8>;
 
@@ -308,15 +307,17 @@ impl<
 	> TakeRevenue for XcmFeesTo32ByteAccount<FungiblesMutateAdapter, AccountId, ReceiverAccount>
 {
 	fn take_revenue(revenue: MultiAsset) {
-		if let Some(receiver) = ReceiverAccount::get() {
-			let ok = FungiblesMutateAdapter::deposit_asset(
-				&revenue,
-				&(X1(AccountId32 { network: Any, id: receiver.into() }).into()),
-			)
-			.is_ok();
-
-			debug_assert!(ok, "`deposit_asset` cannot generally fail; qed");
-		}
+		// TODO: hack
+		// if let Some(receiver) = ReceiverAccount::get() {
+		// 	let ok = FungiblesMutateAdapter::deposit_asset(
+		// 		&revenue,
+		// 		&(X1(AccountId32 { network: Any, id: receiver.into() }).into()),
+		// 	)
+		// 	.is_ok();
+		//
+		// 	debug_assert!(ok, "`deposit_asset` cannot generally fail; qed");
+		// }
+		unimplemented!("TODO: hack - implement if needed")
 	}
 }
 

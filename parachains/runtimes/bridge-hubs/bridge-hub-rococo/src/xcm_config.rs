@@ -1,13 +1,12 @@
 use super::{
-	AccountId, Balance, Balances, Call, Event, Origin, ParachainInfo, ParachainSystem, PolkadotXcm, Runtime,
-	XcmpQueue,
+	AccountId, Balance, Balances, Call, Event, Origin, ParachainInfo, ParachainSystem, PolkadotXcm,
+	Runtime, XcmpQueue,
 };
 use frame_support::{
 	match_types, parameter_types,
 	traits::{Everything, Nothing},
-	weights::Weight,
+	weights::{IdentityFee, Weight},
 };
-use frame_support::weights::IdentityFee;
 use pallet_xcm::XcmPassthrough;
 use polkadot_parachain::primitives::Sibling;
 use xcm::latest::prelude::*;

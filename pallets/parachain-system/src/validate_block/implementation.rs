@@ -329,7 +329,6 @@ fn host_offchain_index_set(_key: &[u8], _value: &[u8]) {}
 
 fn host_offchain_index_clear(_key: &[u8]) {}
 
-
 fn hack_result(result: (bool, u32)) -> KillStorageResult {
 	let (b, n) = result;
 	if b == true {

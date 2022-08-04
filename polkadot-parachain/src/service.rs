@@ -40,6 +40,7 @@ use crate::rpc;
 pub use parachains_common::{AccountId, Balance, Block, BlockNumber, Hash, Header, Index as Nonce};
 
 use cumulus_client_consensus_relay_chain::Verifier as RelayChainVerifier;
+use frame_rpc_system::FullSystem;
 use futures::lock::Mutex;
 use sc_consensus::{
 	import_queue::{BasicQueue, Verifier as VerifierT},
@@ -60,7 +61,6 @@ use sp_runtime::{
 	traits::{BlakeTwo256, Header as HeaderT},
 };
 use std::{marker::PhantomData, sync::Arc, time::Duration};
-use substrate_frame_rpc_system::FullSystem;
 use substrate_prometheus_endpoint::Registry;
 
 #[cfg(not(feature = "runtime-benchmarks"))]
@@ -510,26 +510,26 @@ where
 		+ sp_block_builder::BlockBuilder<Block>
 		+ cumulus_primitives_core::CollectCollationInfo<Block>
 		+ pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>
-		+ substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
+		+ frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
 	sc_client_api::StateBackendFor<TFullBackend<Block>, Block>: sp_api::StateBackend<BlakeTwo256>,
-// TODO: hack
-// 	RB: Fn(
-// 			Arc<TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>>,
-// 		) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>
-// 		+ Send
-// 		+ 'static,
+	// TODO: hack
+	// 	RB: Fn(
+	// 			Arc<TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>>,
+	// 		) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>
+	// 		+ Send
+	// 		+ 'static,
 	RB: Fn(
-		sc_rpc_api::DenyUnsafe,
-		Arc<TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>>,
-		Arc<
-			sc_transaction_pool::FullPool<
-				Block,
-				TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>,
+			sc_rpc_api::DenyUnsafe,
+			Arc<TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>>,
+			Arc<
+				sc_transaction_pool::FullPool<
+					Block,
+					TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>,
+				>,
 			>,
-		>,
-	) -> jsonrpc_core::IoHandler<sc_rpc::Metadata>
-	+ Send
-	+ 'static,
+		) -> jsonrpc_core::IoHandler<sc_rpc::Metadata>
+		+ Send
+		+ 'static,
 	BIQ: FnOnce(
 			Arc<TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>>,
 			&Configuration,
@@ -1181,7 +1181,7 @@ where
 		+ cumulus_primitives_core::CollectCollationInfo<Block>
 		+ sp_consensus_aura::AuraApi<Block, <<AuraId as AppKey>::Pair as Pair>::Public>
 		+ pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>
-		+ substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
+		+ frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
 	sc_client_api::StateBackendFor<TFullBackend<Block>, Block>: sp_api::StateBackend<BlakeTwo256>,
 	<<AuraId as AppKey>::Pair as Pair>::Signature:
 		TryFrom<Vec<u8>> + std::hash::Hash + sp_runtime::traits::Member + Codec,
@@ -1194,8 +1194,8 @@ where
 		// TODO: hack
 		// |_| Ok(RpcModule::new(())),
 		|deny_unsafe, client, pool| {
+			use frame_rpc_system::{FullSystem, SystemApi};
 			use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApi};
-			use substrate_frame_rpc_system::{FullSystem, SystemApi};
 
 			let mut io = jsonrpc_core::IoHandler::default();
 			io.extend_with(SystemApi::to_delegate(FullSystem::new(
