@@ -27,7 +27,7 @@ use cumulus_client_cli::generate_genesis_block;
 use cumulus_primitives_core::ParaId;
 // TODO: hack
 // use frame_benchmarking_cli::{BenchmarkCmd, SUBSTRATE_REFERENCE_HARDWARE};
-use frame_benchmarking_cli::{BenchmarkCmd};
+use frame_benchmarking_cli::BenchmarkCmd;
 use log::info;
 use parachains_common::{AuraId, StatemintAuraId};
 use sc_cli::{
@@ -41,6 +41,7 @@ use sc_service::{
 use sp_core::hexdisplay::HexDisplay;
 use sp_runtime::traits::{AccountIdConversion, Block as BlockT};
 use std::{net::SocketAddr, path::PathBuf};
+
 use crate::chain_spec::bridge_hubs::BridgeHubRuntimeType;
 
 /// Helper enum that is used for better distinction of different parachain/runtime configuration
@@ -74,6 +75,23 @@ impl RuntimeResolver for dyn ChainSpec {
 
 /// Implementation, that can resolve [`Runtime`] from any json configuration file
 impl RuntimeResolver for PathBuf {
+	fn runtime(&self) -> Runtime {
+		#[derive(Debug, serde::Deserialize)]
+		struct EmptyChainSpecWithId {
+			id: String,
+		}
+
+		let file = std::fs::File::open(self).expect("Failed to open file");
+		let reader = std::io::BufReader::new(file);
+		let chain_spec: EmptyChainSpecWithId = sp_serializer::from_reader(reader)
+			.expect("Failed to read 'json' file with ChainSpec configuration");
+
+		runtime(&chain_spec.id)
+	}
+}
+
+/// Implementation, that can resolve [`Runtime`] from any json configuration file
+impl ChainType for PathBuf {
 	fn runtime(&self) -> Runtime {
 		#[derive(Debug, serde::Deserialize)]
 		struct EmptyChainSpecWithId {
@@ -255,7 +273,12 @@ fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
 
 		// -- Loading a specific spec from disk
 		path => {
-			BridgeHubRuntimeType::RococoLocal.chain_spec_from_json_file(path.into())?
+			let path: PathBuf = path.into();
+			match path.runtime() {
+				Runtime::BridgeHub(bridge_hub_runtime_type) =>
+					bridge_hub_runtime_type.chain_spec_from_json_file(path.into())?,
+				_ => unimplemented!("TODO: hack - fix after rebase and merge"),
+			}
 		},
 	})
 }
@@ -490,7 +513,11 @@ macro_rules! construct_async_run {
 			Runtime::BridgeHub(bridge_hub_runtime_type) => {
 				runner.async_run(|$config| {
 					let $components = match bridge_hub_runtime_type {
-						chain_spec::bridge_hubs::BridgeHubRuntimeType::RococoLocal => new_partial::<bridge_hub_rococo_runtime::RuntimeApi, _>(
+						chain_spec::bridge_hubs::BridgeHubRuntimeType::RococoLocal => new_partial::<chain_spec::bridge_hubs::rococo::RuntimeApi, _>(
+							&$config,
+							crate::service::aura_build_import_queue::<_, AuraId>,
+						)?,
+						chain_spec::bridge_hubs::BridgeHubRuntimeType::WococoLocal => new_partial::<chain_spec::bridge_hubs::wococo::RuntimeApi, _>(
 							&$config,
 							crate::service::aura_build_import_queue::<_, AuraId>,
 						)?,
@@ -623,8 +650,8 @@ pub fn run() -> Result<()> {
 					})
 				}),
 				BenchmarkCmd::Machine(cmd) =>
-					// TODO: hack
-					// runner.sync_run(|config| cmd.run(&config, SUBSTRATE_REFERENCE_HARDWARE.clone())),
+				// TODO: hack
+				// runner.sync_run(|config| cmd.run(&config, SUBSTRATE_REFERENCE_HARDWARE.clone())),
 					unimplemented!("TODO: hack - implement if needed"),
 				// NOTE: this allows the Client to leniently implement
 				// new benchmark commands without requiring a companion MR.
@@ -776,7 +803,12 @@ pub fn run() -> Result<()> {
 					Runtime::BridgeHub(bridge_hub_runtime_type) => match bridge_hub_runtime_type {
 						chain_spec::bridge_hubs::BridgeHubRuntimeType::RococoLocal =>
 							crate::service::start_generic_aura_node::<
-								bridge_hub_rococo_runtime::RuntimeApi,
+								chain_spec::bridge_hubs::rococo::RuntimeApi,
+								AuraId,
+							>(config, polkadot_config, collator_options, id, hwbench),
+						chain_spec::bridge_hubs::BridgeHubRuntimeType::WococoLocal =>
+							crate::service::start_generic_aura_node::<
+								chain_spec::bridge_hubs::wococo::RuntimeApi,
 								AuraId,
 							>(config, polkadot_config, collator_options, id, hwbench),
 					}
