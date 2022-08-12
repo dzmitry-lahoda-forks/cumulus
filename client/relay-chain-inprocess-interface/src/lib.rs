@@ -49,7 +49,7 @@ const TIMEOUT_IN_SECONDS: u64 = 6;
 pub struct RelayChainInProcessInterface<Client> {
 	full_client: Arc<Client>,
 	backend: Arc<FullBackend>,
-	sync_oracle: Arc<dyn SyncOracle + Send + Sync>,
+	sync_oracle: Arc<parking_lot::Mutex<dyn SyncOracle + Send + Sync>>,
 	overseer_handle: Option<Handle>,
 }
 
@@ -58,7 +58,7 @@ impl<Client> RelayChainInProcessInterface<Client> {
 	pub fn new(
 		full_client: Arc<Client>,
 		backend: Arc<FullBackend>,
-		sync_oracle: Arc<dyn SyncOracle + Send + Sync>,
+		sync_oracle: Arc<parking_lot::Mutex<dyn SyncOracle + Send + Sync>>,
 		overseer_handle: Option<Handle>,
 	) -> Self {
 		Self { full_client, backend, sync_oracle, overseer_handle }
@@ -168,7 +168,10 @@ where
 	}
 
 	async fn is_major_syncing(&self) -> RelayChainResult<bool> {
-		Ok(self.sync_oracle.is_major_syncing())
+		let mut network = self.sync_oracle.lock();
+		Ok(network.is_major_syncing())
+		// TODO: hack
+		// Ok(self.sync_oracle.is_major_syncing())
 	}
 
 	fn overseer_handle(&self) -> RelayChainResult<Option<Handle>> {
@@ -287,7 +290,7 @@ where
 struct RelayChainInProcessInterfaceBuilder {
 	polkadot_client: polkadot_client::Client,
 	backend: Arc<FullBackend>,
-	sync_oracle: Arc<dyn SyncOracle + Send + Sync>,
+	sync_oracle: Arc<parking_lot::Mutex<dyn SyncOracle + Send + Sync>>,
 	overseer_handle: Option<Handle>,
 }
 
@@ -385,7 +388,7 @@ pub fn build_inprocess_relay_chain(
 		hwbench,
 	)?;
 
-	let sync_oracle: Arc<dyn SyncOracle + Send + Sync> = Arc::new(full_node.network.clone());
+	let sync_oracle: Arc<parking_lot::Mutex<dyn SyncOracle + Send + Sync>> = Arc::new(parking_lot::Mutex::new(full_node.network.clone()));
 	let relay_chain_interface_builder = RelayChainInProcessInterfaceBuilder {
 		polkadot_client: full_node.client.clone(),
 		backend: full_node.backend.clone(),
