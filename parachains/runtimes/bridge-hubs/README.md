@@ -19,7 +19,7 @@ Every _BridgeHub_ is meant to be **_common good parachain_** with main responsib
 ### Deploy
 ```
 cd <cumulus-git-repo-dir>
-cargo build --release --locked -p polkadot-parachain@0.9.220
+cargo build --release --locked -p polkadot-parachain@0.9.230
 
 mkdir -p ~/local_bridge_testing/bin
 
@@ -28,7 +28,23 @@ cp target/release/polkadot-parachain ~/local_bridge_testing/bin/polkadot-paracha
 ls -lrt ~/local_bridge_testing/bin/polkadot-parachain
 ```
 
-### Run relay chains (Rococo, Wococo)
+### Run with Zombienet
+
+```
+# Rococo
+POLKADOT_BINARY_PATH=~/local_bridge_testing/bin/polkadot \
+	POLKADOT_PARACHAIN_BINARY_PATH=~/local_bridge_testing/bin/polkadot-parachain \
+	~/local_bridge_testing/bin/zombienet-linux --provider native spawn ./zombienet_tests/0004-run_bridge_hubs_rococo.toml
+
+# Wococo
+POLKADOT_BINARY_PATH=~/local_bridge_testing/bin/polkadot \
+	POLKADOT_PARACHAIN_BINARY_PATH=~/local_bridge_testing/bin/polkadot-parachain \
+	~/local_bridge_testing/bin/zombienet-linux --provider native spawn ./zombienet_tests/0004-run_bridge_hubs_wococo.toml
+```
+
+### Run from cmd
+
+#### Run relay chains (Rococo, Wococo)
 ```
 <build polkadot repo at first and copy binary to ~/local_bridge_testing/bin/ >
 
@@ -47,8 +63,8 @@ ls -lrt ~/local_bridge_testing/bin/polkadot-parachain
 ```
 We need at least 5 nodes together (validator + collator) to finalize blocks.
 
-### Run BridgeHub parachains (Rococo, Wococo)
-#### Generate spec + genesis + wasm (paraId=1013)
+#### Run BridgeHub parachains (Rococo, Wococo)
+##### Generate spec + genesis + wasm (paraId=1013)
 ```
 # Rococo
 rm ~/local_bridge_testing/bridge-hub-rococo-local-raw.json
@@ -63,7 +79,7 @@ rm ~/local_bridge_testing/bridge-hub-wococo-local-raw.json
 ~/local_bridge_testing/bin/polkadot-parachain export-genesis-wasm --chain ~/local_bridge_testing/bridge-hub-wococo-local-raw.json > ~/local_bridge_testing/bridge-hub-wococo-local-genesis-wasm
 ```
 
-#### Run collators (Rococo, Wococo)
+##### Run collators (Rococo, Wococo)
 ```
 # Rococo
 ~/local_bridge_testing/bin/polkadot-parachain --collator --alice --force-authoring --tmp --port 40333 --rpc-port 8933 --ws-port 8943 --chain ~/local_bridge_testing/bridge-hub-rococo-local-raw.json -- --execution wasm --chain ~/local_bridge_testing/rococo-local-cfde.json --port 41333 --rpc-port 48933 --ws-port 48943
@@ -74,7 +90,7 @@ rm ~/local_bridge_testing/bridge-hub-wococo-local-raw.json
 ~/local_bridge_testing/bin/polkadot-parachain --collator --bob --force-authoring --tmp --port 40336 --rpc-port 8936 --ws-port 8946 --chain ~/local_bridge_testing/bridge-hub-wococo-local-raw.json -- --execution wasm --chain ~/local_bridge_testing/wococo-local-cfde.json --port 41336 --rpc-port 48936 --ws-port 48946
 ```
 
-#### Activate parachains (Rococo, Wococo) (paraId=1013)
+##### Activate parachains (Rococo, Wococo) (paraId=1013)
 ```
 # Rococo
 https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9942#/explorer
@@ -83,7 +99,7 @@ https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9942#/explorer
 https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9945#/explorer
 ```
 
-#### After parachain activation, we should see new blocks in collator's node
+##### After parachain activation, we should see new blocks in collator's node
 ```
 https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/parachains
 ```
