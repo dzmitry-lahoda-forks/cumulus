@@ -20,7 +20,7 @@ use sc_cli::RuntimeVersion;
 use std::{path::PathBuf, str::FromStr};
 
 /// Collects all supported BridgeHub configurations
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum BridgeHubRuntimeType {
 	RococoLocal,
 	WococoLocal,

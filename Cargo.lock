@@ -12764,7 +12764,7 @@ version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#b7d2cb5c2dbfbc49cb3c06f6198daa60b04f16c0"
 dependencies = [
  "clap 3.2.17",
- "jsonrpsee",
+ "jsonrpsee 0.10.1",
  "log",
  "parity-scale-codec",
  "remote-externalities",

@@ -90,23 +90,6 @@ impl RuntimeResolver for PathBuf {
 	}
 }
 
-/// Implementation, that can resolve [`Runtime`] from any json configuration file
-impl ChainType for PathBuf {
-	fn runtime(&self) -> Runtime {
-		#[derive(Debug, serde::Deserialize)]
-		struct EmptyChainSpecWithId {
-			id: String,
-		}
-
-		let file = std::fs::File::open(self).expect("Failed to open file");
-		let reader = std::io::BufReader::new(file);
-		let chain_spec: EmptyChainSpecWithId = sp_serializer::from_reader(reader)
-			.expect("Failed to read 'json' file with ChainSpec configuration");
-
-		runtime(&chain_spec.id)
-	}
-}
-
 fn runtime(id: &str) -> Runtime {
 	let id = id.replace("_", "-");
 	let (_, id, para_id) = extract_parachain_id(&id);
