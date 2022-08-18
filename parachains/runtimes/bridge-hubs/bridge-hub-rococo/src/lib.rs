@@ -482,7 +482,7 @@ impl pallet_bridge_grandpa::Config<BridgeGrandpaWococoInstance> for Runtime {
 	type WeightInfo = ();
 }
 
-/// Add granda bridge pallet to track Wococo relay chain
+/// Add granda bridge pallet to track Rococo relay chain
 pub type BridgeGrandpaRococoInstance = pallet_bridge_grandpa::Instance2;
 impl pallet_bridge_grandpa::Config<BridgeGrandpaRococoInstance> for Runtime {
 	type BridgedChain = bp_rococo::Rococo;
@@ -505,7 +505,7 @@ pub type BridgeParachainWococoInstance = pallet_bridge_parachains::Instance1;
 impl pallet_bridge_parachains::Config<BridgeParachainWococoInstance> for Runtime {
 	type WeightInfo = ();
 	type BridgesGrandpaPalletInstance = BridgeGrandpaWococoInstance;
-	type ParasPalletName = RococoBridgeParachainPalletName;
+	type ParasPalletName = WococoBridgeParachainPalletName;
 	type TrackedParachains = IsInVec<GetTenFirstParachains>;
 	type HeadsToKeep = ParachainHeadsToKeep;
 }
@@ -515,7 +515,7 @@ pub type BridgeParachainRococoInstance = pallet_bridge_parachains::Instance2;
 impl pallet_bridge_parachains::Config<BridgeParachainRococoInstance> for Runtime {
 	type WeightInfo = ();
 	type BridgesGrandpaPalletInstance = BridgeGrandpaRococoInstance;
-	type ParasPalletName = WococoBridgeParachainPalletName;
+	type ParasPalletName = RococoBridgeParachainPalletName;
 	type TrackedParachains = IsInVec<GetTenFirstParachains>;
 	type HeadsToKeep = ParachainHeadsToKeep;
 }
