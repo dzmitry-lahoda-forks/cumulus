@@ -179,7 +179,9 @@ where
 		start_page: u32,
 		page_count: u32,
 	) -> RelayChainResult<Vec<InboundDownwardMessage>> {
-		(**self).retrieve_dmq_contents(para_id, relay_parent, start_page, page_count).await
+		(**self)
+			.retrieve_dmq_contents(para_id, relay_parent, start_page, page_count)
+			.await
 	}
 
 	async fn retrieve_all_inbound_hrmp_channel_contents(
