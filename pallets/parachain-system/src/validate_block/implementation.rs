@@ -74,7 +74,9 @@ where
 
 	sp_std::mem::drop(storage_proof);
 
-	let backend = sp_state_machine::TrieBackendBuilder::new(db, *parent_head.state_root()).build();
+	// TODO: hack
+	// let backend = sp_state_machine::TrieBackendBuilder::new(db, *parent_head.state_root()).build();
+	let backend = sp_state_machine::TrieBackend::new(db, *parent_head.state_root());
 
 	let _guard = (
 		// Replace storage calls with our own implementations

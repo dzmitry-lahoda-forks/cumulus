@@ -909,9 +909,10 @@ impl CliConfiguration<Self> for RelayChainCli {
 		self.base.base.transaction_pool()
 	}
 
-	fn trie_cache_maximum_size(&self) -> Result<Option<usize>> {
-		self.base.base.trie_cache_maximum_size()
-	}
+	// TODO: hack
+	// fn trie_cache_maximum_size(&self) -> Result<Option<usize>> {
+	// 	self.base.base.trie_cache_maximum_size()
+	// }
 
 	fn rpc_methods(&self) -> Result<sc_service::config::RpcMethods> {
 		self.base.base.rpc_methods()
